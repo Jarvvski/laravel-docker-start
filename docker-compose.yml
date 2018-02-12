@@ -1,0 +1,59 @@
+version: '2'
+services:
+    web:
+        build:
+            context: ./
+            dockerfile: web.docker
+        image: my-app/nginx-web:dev
+        depends_on:
+            - db
+            - cache
+        container_name: nginx
+        volumes:
+            - ./:/srv/www
+        ports:
+            - "80:80"
+        links:
+            - app
+    app:
+        build:
+            context: ./
+            dockerfile: app.docker
+        image: my-app/jrnl:dev
+        container_name: php
+        volumes:
+            - ./:/srv/www
+        depends_on:
+            - db
+        links:
+            - db
+            - cache
+        environment:
+            - "DB_HOST=db"
+            - "DB_PORT=3306"
+            - "DB_DATABASE=laravel"
+            - "DB_USERNAME=root"
+            - "DB_PASSWORD=secret"
+            - "REDIS_HOST=cache"
+            - "REDIS_PORT=6379"
+
+    db:
+        image: mysql:5.7
+        container_name: db
+        restart: always
+        environment:
+            - "MYSQL_ROOT_PASSWORD=secret"
+            - "MYSQL_DATABASE=laravel"
+        volumes:
+            - db_data:/var/lib/mysql
+        ports:
+            - "3306:3306"
+
+    cache:
+        image: redis:3.0
+        container_name: cache
+        ports:
+            - "6379:6379"
+
+volumes:
+    db_data:
