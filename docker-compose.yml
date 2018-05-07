@@ -45,7 +45,7 @@ services:
             - "MYSQL_USER=homestead"
             - "MYSQL_PASSWORD=secret"
             - "MYSQL_ROOT_PASSWORD=secret"
-            - "MYSQL_DATABASE=laravel"
+            - "MYSQL_DATABASE=homestead"
         volumes:
             - db_data:/var/lib/mysql
         ports:
